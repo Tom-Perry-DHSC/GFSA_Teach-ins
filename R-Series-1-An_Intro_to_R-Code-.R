@@ -243,6 +243,10 @@ clock_sounds <- rep(c("tick", "tock"), 3) # REPeats the vector c("tick", "tock")
 
 print(length(planets)) # Prints "8"
 
+# ---------------------------------------------------------
+# Section 5b: Index positions
+# ---------------------------------------------------------
+
 ######## You can get elements of a vector by indexing, using [] notation.
 ######## Note that R, unlike many languages, uses 1-indexing rather than 0-indexing.
 ######## This means that the first element of a vector has index 1.
@@ -250,10 +254,6 @@ print(length(planets)) # Prints "8"
 print(planets[1]) # Prints "mercury"
 planet_4 <- planets[4]
 print(planet_4)   # Prints "mars"
-
-# ---------------------------------------------------------
-# Section 5b: Index positions
-# ---------------------------------------------------------
 
 ######## You can also index multiple elements at once. There are two main ways of doing this - with
 ########    a vector of "index positions", and with a vector of logicals.
