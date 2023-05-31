@@ -796,8 +796,9 @@ number_of_storm_names <- storm_names %>% unique() %>% count() #Same as above usi
 
 # ---------------------------------------------------------
 # Section 2: Getting the Data Ready to Plot 
-# Aim: stacked bar chart, storms since 2000 (inc.), categories shown by colours 
 # ---------------------------------------------------------
+
+######## Aim: stacked bar chart, storms since 2000 (inc.), categories shown by colours 
 
 ordered_dt <- arrange(dt, desc(category)) #So when I remove duplicates (e.g. all entries of 'Katrina 2005') then the entry I keep is the one with the highest category
 
@@ -812,19 +813,19 @@ plot_dt <- filter(filtered_dt, filtered_dt$year > 1999)
 # Section 3: A Simple Bar Chart & Corresponding Pie Chart
 # ---------------------------------------------------------
 
-bar_chart <- ggplot(plot_dt, aes(x = year, fill = category)) + geom_bar() 
+bar_chart <- ggplot(plot_dt, aes(x = year, fill = factor(category))) + geom_bar() 
 bar_chart <- bar_chart + ggtitle('Atlantic Storms') + xlab("Year") + ylab("Number of Storms") + labs(caption='Data Source: NOAA', fill='Category')
 
-pie_chart <- ggplot(plot_dt, aes(x = "", fill = category)) + geom_bar() + coord_polar(theta = "y")
+pie_chart <- ggplot(plot_dt, aes(x = "", fill = factor(category))) + geom_bar() + coord_polar(theta = "y")
 pie_chart <- pie_chart + geom_text(stat = "count", aes(label = ..count..), position = position_stack(vjust = 0.5)) + scale_fill_brewer()
 pie_chart <- pie_chart + ggtitle('Atlantic Storm Categories (2000-2015)') + labs(caption='Data Source: NOAA', fill='Category') + theme_void()
 
-
 # ---------------------------------------------------------
 # Section 4: More Than 1 Plot/Geom On One Chart!
-# Aim: Plotting the path of Hurricane Katrina (2005)
-# Here, preparing the data is a lot easier and more work is done on the chart
 # ---------------------------------------------------------
+
+######## Aim: Plotting the path of Hurricane Katrina (2005)
+######## Here, preparing the data is a lot easier and more work is done on the chart
 
 katrina_dt <- filter(dt, name == 'Katrina' & year == '2005')
 plot2_dt <- katrina_dt[order(katrina_dt$month, katrina_dt$day, katrina_dt$hour),] #Not necessary, but helpful to see the order() function
@@ -841,8 +842,11 @@ scatter_plot <- scatter_plot + geom_point(new_orleans, mapping = aes(long,lat), 
 scatter_plot <- scatter_plot + ggtitle('Path of Hurricane Katrina (August 2005)') + xlab("Longitude") + ylab("Latitude") + labs(caption='Data Source: NOAA', size='Category', color='Date') + coord_cartesian(xlim=c(-74, -95), ylim=c(22,38))
 scatter_plot <- scatter_plot + annotate('text', x=-92.5, y=30.2, label='New Orleans')
 
-#The chart below is another example of more than one Plot/Geom on one chart
-#We are plotting a histogram for the storm pressures from our original data overlaid with a 'density' plot
+# scatter_plot <- scatter_plot + scale_x_reverse()
+######## Uncomment the line above if you get the x-axis in the wrong order (i.e. increasing longitude). Apparently an issue for some who run this code.
+
+######## The chart below is another example of more than one Plot/Geom on one chart
+######## We are plotting a histogram for the storm pressures from our original data overlaid with a 'density' plot
 
 density_plot <- ggplot(dt, aes(x= pressure)) + geom_histogram(aes(y=..density..), colour="black", fill="white", binwidth = 5)
 density_plot <- density_plot + geom_density(alpha=.2, fill="#FF6666") #We see some more ways to format, here a new way to refer to colours and 'alpha' or opacity
@@ -850,9 +854,10 @@ density_plot <- density_plot + ggtitle('Distribution of Atlantic Storm Pressures
 
 # ---------------------------------------------------------
 # Section 5: How to save your plot
-# Uncomment the line below and paste into console, it'll save in the current directory and you need format in file name
-# If you don't specify the plot, it'll just save the last one you produced
-# You can also save using RStudio buttons provided, but code may be more convenient
 # ---------------------------------------------------------
+
+######## Uncomment the line below and paste into console, it'll save in the current directory and you need format in file name
+######## If you don't specify the plot, it'll just save the last one you produced
+######## You can also save using RStudio buttons provided, but code may be more convenient
 
 #ggsave(plot = scatter_plot, filename = 'My_great_plot.jpeg', device = 'jpeg')
