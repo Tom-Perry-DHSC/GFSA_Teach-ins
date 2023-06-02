@@ -447,7 +447,7 @@ filtered_df <- animal_info_df[cats_and_fish,] #Dataframes are the main way of ha
 ######## Compare the following examples:
 
 ######## mutate(total=sum((data_1+data_2)/data_3,na.rm=TRUE))
-######## mutate(total= = sum((data_1 + data_2) / data_4, na.rm = TRUE))
+######## mutate(total = sum((data_1 + data_2) / data_4, na.rm = TRUE))
 
 ######## Evidently one is better!
 
@@ -457,7 +457,7 @@ filtered_df <- animal_info_df[cats_and_fish,] #Dataframes are the main way of ha
 
 ######## When analysing data in R, you will almost always need to import a library.
 ######## The most common is tidyverse, which is a collection of packages that
-########    provide various useful functionalities.
+########    provide various useful abilities
 
 ######## To install the tidyverse package, we run the following line
 
@@ -485,7 +485,7 @@ library(tidyverse)
 ######## The tidyverse is the main package you will use in R
 ######## Let's load in the tidyverse, once we've made sure that it's installed
 
-install.packages("tidyverse)")
+install.packages("tidyverse")
 library(tidyverse)
 
 ######## The tidyverse includes many packages:
@@ -549,7 +549,7 @@ write.csv()
 
 readr::write_csv()
 
-######## In practice, we need to specfiy where and what:
+######## In practice, we need to specify where and what:
 
 readr::write_csv(dataframe, filepath)
 
@@ -573,28 +573,49 @@ readxl::read_xlsx()
 
 readxl::read_xlsx(readxl_example("datasets.xlsx"))
 
+######## Unfortunately the world doesn't just use .csv or .xlsx files :(
+######## Thankfully the haven package (part of the tidyverse) has us covered
+
+######## SAS data
+
+read_sas("mtcars.sas7bdat")
+write_xpt(mtcars, "mtcars.xpt")
+
+######## SPSS data
+
+read_sav("mtcars.sav")
+write_sav(mtcars, "mtcars.sav")
+
+######## Stata data
+
+read_dta("mtcars.dta")
+write_dta(mtcars, "mtcars.dta")
+
+# ---------------------------------------------------------
+# Section 5: Manipulating Data (binding and merging)
+# ---------------------------------------------------------
+
 ######## We will use the storms dataset, which is contained within the tidyverse
 ######## So we can play around with some functions, we'll define some other dataframes
 ######## Let's assign them separately
 
 my_data <- storms
 
+######## We'll use these for binding
 storms_old <- my_data[my_data["year"] < 2000, ]
 storms_new <- my_data[my_data["year"] >= 2000, ]
-storms_ll <- my_data[c("year", "month", "day", "lat", "long")]
+
+######## We'll use these for joining
+storms_lat_long <- my_data[c("year", "month", "day", "lat", "long")]
 storms_type <- my_data[c("year", "month", "day", "status", "category")]
 
-######## I'll also create another table we'll need
+######## I'll also create another table we'll need, don't worry about the contents yet.
 
 lat_lookup <- mutate(tibble(lat = seq(-90,90,0.1)), lat_label = case_when(lat < 0 ~ "southern hemisphere", lat < 23.43 ~ "below tropic of cancer", lat < 66.57 ~ "between cancer and arctic", TRUE ~ "above arctic"))
 lat_lookup_filtered <- filter(lat_lookup, (5 * lat) %% 1 == 0)
 long_lookup <- mutate(tibble(lat = seq(-90,90,0.1)),lat_label =  case_when(lat < 0 ~ "western hemisphere", TRUE ~ "eastern hemisphere"))
 
-# ---------------------------------------------------------
-# Section 5: Manipulating Data (binding and merging)
-# ---------------------------------------------------------
-
-######## To combine data sets with the same column or row names, we can use
+######## To combine data sets with the same column or row names, we can use.
 
 dplyr::bind_rows()
 dplyr::bind_cols()
@@ -603,7 +624,7 @@ dplyr::bind_cols()
 ######## Can you guess what these produce
 
 storms_all_dates <- dplyr::bind_rows(storms_old, storms_new)
-storms_all_info <- dplyr::bind_cols(storms_ll, storms_type)
+storms_all_info <- dplyr::bind_cols(storms_lat_long, storms_type)
 
 ######## Similarly, to join data sets together, we can use 
 
@@ -612,14 +633,16 @@ dplyr::right_join()
 dplyr::inner_join()
 dplyr::full_join()
 
-storms_lat_labelled <- dplyr::left_join(storms_ll, lat_lookup)
-storms_lat_labelled <- dplyr::full_join(storms_ll, lat_lookup)
-storms_lat_labelled <- dplyr::right_join(storms_ll, lat_lookup)
+storms_lat_labelled_left <- dplyr::left_join(storms_lat_long, lat_lookup)
+storms_lat_labelled_full <- dplyr::full_join(storms_lat_long, lat_lookup)
+storms_lat_labelled_right <- dplyr::right_join(storms_lat_long, lat_lookup)
 
-storms_lat_labelled <- dplyr::inner_join(storms_ll, lat_lookup_filtered)
-storms_lat_labelled <- dplyr::full_join(storms_ll, lat_lookup_filtered)
+storms_lat_labelled_inner <- dplyr::inner_join(storms_lat_long, lat_lookup_filtered)
+storms_lat_labelled_full2 <- dplyr::full_join(storms_lat_long, lat_lookup_filtered)
 
 ######## Note longer means more rows and wider means more columns
+
+######## reduce(full_join, by='id')
 
 ###########################
 # -------------------------
