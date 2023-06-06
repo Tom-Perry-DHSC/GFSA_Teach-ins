@@ -462,6 +462,7 @@ filtered_df <- animal_info_df[cats_and_fish,] #Dataframes are the main way of ha
 ######## To install the tidyverse package, we run the following line
 
 install.packages("tidyverse")
+install.packages(tidyverse)
 
 ######## Note that this only needs to be done once - after the packages are
 ########    installed, they're saved to a local library.
@@ -476,6 +477,8 @@ install.packages("tidyverse", type = "binary")
 ######## To load/import a library, we run
 
 library(tidyverse)
+packages <- c(tidyverse, ggplot)
+library(packages)
 
 # ---------------------------------------------------------
 # Section 3: What is the Tidyverse?
@@ -504,7 +507,11 @@ library(tidyverse)
 ######## Today we'll focus on the importing/exporting and combining
 
 ######## To import data, the most useful package is readr, part of the tidyverse
-######## It includes options to import csv, xlsx, sav and other file types
+######## It includes options to import csv, xlsx and other file types
+
+# ---------------------------------------------------------
+# Section 4a: .csv Files and Filepaths
+# ---------------------------------------------------------
 
 ######## Let's start with importing the easiest format, a csv.
 ######## To import a csv, we have a couple of options, a base R function, (in the utils package), 
@@ -552,10 +559,15 @@ readr::write_csv()
 ######## In practice, we need to specify where and what:
 
 readr::write_csv(dataframe, filepath)
+my_data <- storms
 
 ######## Usually csvs are the easiest data sources to use,
 ########    usually, a csv is already processed in some sense
 ########    and so is approaching "oven-ready"
+
+# ---------------------------------------------------------
+# Section 4b: .xls/.xlsx Files
+# ---------------------------------------------------------
 
 ######## Often however, you will be using Excel files, most commonly
 ########    a .xls or .xlsx file
@@ -572,6 +584,10 @@ readxl::read_xlsx()
 ######## For example, some preloaded data in the readxl package:
 
 readxl::read_xlsx(readxl_example("datasets.xlsx"))
+
+# ---------------------------------------------------------
+# Section 4c: Data From Other Programming Languages/Software
+# ---------------------------------------------------------
 
 ######## Unfortunately the world doesn't just use .csv or .xlsx files :(
 ######## Thankfully the haven package (part of the tidyverse) has us covered
@@ -590,6 +606,16 @@ write_sav(mtcars, "mtcars.sav")
 
 read_dta("mtcars.dta")
 write_dta(mtcars, "mtcars.dta")
+
+# ---------------------------------------------------------
+# Section 4c: Handy Tips
+# ---------------------------------------------------------
+
+######## Don't import everything
+
+######## col_select
+
+read_csv(filepath, filename, col_select = c("column_1", "column_2"))
 
 # ---------------------------------------------------------
 # Section 5: Manipulating Data (binding and merging)
@@ -624,6 +650,7 @@ dplyr::bind_cols()
 ######## Can you guess what these produce
 
 storms_all_dates <- dplyr::bind_rows(storms_old, storms_new)
+
 storms_all_info <- dplyr::bind_cols(storms_lat_long, storms_type)
 
 ######## Similarly, to join data sets together, we can use 
@@ -634,6 +661,8 @@ dplyr::inner_join()
 dplyr::full_join()
 
 storms_lat_labelled_left <- dplyr::left_join(storms_lat_long, lat_lookup)
+
+
 storms_lat_labelled_full <- dplyr::full_join(storms_lat_long, lat_lookup)
 storms_lat_labelled_right <- dplyr::right_join(storms_lat_long, lat_lookup)
 
@@ -651,9 +680,38 @@ storms_lat_labelled_full2 <- dplyr::full_join(storms_lat_long, lat_lookup_filter
 ###########################
 
 ######## Let's play around with the Storms dataset some more.
+storms <- storms
+
+# ---------------------------------------------------------
+# Section 1: Basic Maths in Analysis
+# ---------------------------------------------------------
+
+######## Theres some basic mathematical functions we can use in R
+######## Note that the $(dollar) sign is use to denote which column of the dataset we want
+
+max(storms$pressure)
+min(storms$pressure)
+
+mean(storms$wind)
+median(storms$wind)
+
+mean(storms$ts_diameter)
+median(storms$ts_diameter)
+
+mean(storms$ts_diameter, na.rm=TRUE)
+median(storms$ts_diameter, na.rm=TRUE)
+
+# ---------------------------------------------------------
+# Section 2: dplyr and %>% 
+# ---------------------------------------------------------
+
 ######## The key to using dplyr functions is the *pipe* which looks like: %>%
 ######## The shortcut to add a pipe is <ctrl-shift-m>
 ######## We call our dataset, use the pipe %>%, and then call the different functions we want to apply.
+
+# ---------------------------------------------------------
+# Section 2a: The select Function
+# ---------------------------------------------------------
 
 ######## First off, the Select Function allows us to select specific Columns that we are interested in. 
 ######## Here, we can create a new dataset that just looks at the date and time of each storm by listing the columns from our original dataset that we want to keep.
@@ -670,6 +728,10 @@ storms_dates_reordered <- storms %>%
 storms_dates2 <- storms %>%
   dplyr::select(-lat, -long, -status, -category, -wind, -pressure, -ts_diameter, -hu_diameter)
 
+# ---------------------------------------------------------
+# Section 2b: The rename Function
+# ---------------------------------------------------------
+
 ######## The rename function allows us to rename columns (duh!)
 ######## The first variable is the new name, the second variable is the old name (less obvious!)
 
@@ -679,12 +741,20 @@ storms_renamed <- storms %>%
 ######## The arrange function allows us to sort out dataset by a given column
 ######## For example, storms is already sorted chronologically, but lets sort it alphabetically by storm name
 
+# ---------------------------------------------------------
+# Section 2c: The arrange Function
+# ---------------------------------------------------------
+
 storms_alphabetical <- storms_renamed %>% 
   dplyr::arrange(storm_name)
 
 ######## We can arrange it the opposite way wrapping our column in the 'desc' function
 storms_alphabetical <- storms_renamed %>% 
   dplyr::arrange(desc(storm_name))
+
+# ---------------------------------------------------------
+# Section 2d: The filter Function
+# ---------------------------------------------------------
 
 ######## We can use the Filter function to select Rows we are interested in based on a condition. 
 ######## For example, here we can narrow down the Storms Dataset to only include Storms which occured after 2010. 
@@ -700,15 +770,20 @@ storms_clean <- storms %>%
 
 ######## We can use multiple pipes to apply multiple commands in one step. This can be using the same function or different functions.
 ######## The pipe always comes at the end of your line, as it introduces the next line.
+
 ######## Let's filter our dataset to show us only hurricanes after 2010 in one step using our pipe.
 
 hurricanes_recent <- storms %>%
   dplyr::filter(year > 2010) %>%
   dplyr::filter(status == "hurricane")
 
+# ---------------------------------------------------------
+# Section 2e: The mutate Function
+# ---------------------------------------------------------
+
 ######## The mutate function allows us to add new columns to our dataset. It's most useful when applying a function to that column which we pre-populate the column for you.
-######## For example, we're going to add a column to our storms_clean dataset to tell us whether the storm was in the Northern or Southern Hemisphere, using our latitude value.
-######## The first element is the name of our new column. We then add our function to calculate whether the column contains 'Northern' or 'Southern' based on the value of the latitude.
+######## For example, we're going to add a column to our storms_clean dataset to tell us whether the storm was at Daytime or Nightime, using our hour value.
+######## The first element is the name of our new column. We then add our function to calculate whether the column contains 'Daytime' or 'Nightime' based on the value of the hour.
 ######## Reminder that '&' is our symbol for AND, and "|" is our symbol for OR
 
 storms_clean <- storms_clean %>%
@@ -719,15 +794,20 @@ storms_clean <- storms_clean %>%
 
 ######## The summarise function creates a vector or dataset from a specific function applied to the dataset.
 ######## For example here, we can get the mean hour which storms occur by applying the mean function within the summarise function.
+
 storms_clean_mean <- storms_clean %>%
   dplyr::summarise(mean(hour))
 
 ######## However, this hasn't been that useful as a standalone function, because we could have achieved the same output by simply doing:
 
-storms_clean_mean <- mean(storms_clean$hour)
+storms_clean_mean <-mean(storms_clean$hour)
+
+# ---------------------------------------------------------
+# Section 2f: The group_by and ungroup Functions
+# ---------------------------------------------------------
 
 ######## Summarise becomes most useful as a function when it is used in conjunction with the group_by and ungroup functions.
-######## These functions allow us to separate data into groups depending on a specific variable, and then apply functions to these groups.
+######## These functions allow us to seperate data into groups depending on a specific variable, and then apply functions to these groups.
 ######## For example, we can get the mean hour which storms occur, grouped by the different type of storms.
 
 storms_clean_mean2 <- storms_clean %>%
@@ -748,7 +828,8 @@ storms_clean <- storms_clean %>%
 
 ######## For best practice, always ungroup your data after grouping as this will reduce the likelihood of errors.
 
-######## Let's put this all together to make one chunk of code that does all our cleaning
+######## Let's put this all together to make one chunk of code that does all our cleaning:
+
 hurricane_clean <- storms %>% 
   dplyr::select(-c(category, wind, pressure)) %>%  #remove the unnecessary columns
   dplyr::filter(year > 2000) %>% # select storms after 2000 only
@@ -766,7 +847,6 @@ hurricane_summary <- hurricane_clean %>%
   dplyr::summarise(mean(lat), mean(long)) %>% 
   dplyr::ungroup()
 
-
 ######## However, I've spotted that names are often used more than once e.g. Alex 2004 and Alex 2010
 ######## Our code above was taking the mean for all storms named Alex, even if they were different storms
 ######## Let's fix this by adding a column to our hurricane_clean dataset to differentiate between these storms
@@ -774,7 +854,8 @@ hurricane_summary <- hurricane_clean %>%
 hurricane_clean_fix <- hurricane_clean %>% 
   dplyr::mutate(hurricane_id = paste(name, year))
 
-######## Now let's go back and run our summary code again, this time using the hurricane_id column rather than the name column
+######## Now let's go back and run our summary code again, this time using the hurricane_id column rather than the name column:
+
 hurricane_summary2 <- hurricane_clean_fix %>% 
   dplyr::group_by(hurricane_id) %>% 
   dplyr::summarise(mean(lat), mean(long)) %>% 
