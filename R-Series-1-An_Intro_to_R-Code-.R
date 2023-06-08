@@ -924,6 +924,25 @@ pie_chart <- ggplot(plot_dt, aes(x = "", fill = factor(category))) + geom_bar() 
 pie_chart <- pie_chart + geom_text(stat = "count", aes(label = ..count..), position = position_stack(vjust = 0.5)) + scale_fill_brewer()
 pie_chart <- pie_chart + ggtitle('Atlantic Storm Categories (2000-2015)') + labs(caption='Data Source: NOAA', fill='Category') + theme_void()
 
+######## One advantage of the tidyverse is the ability to add line by line, like a recipe.
+######## We can however combine each of these charts into one block, in a similar way to piping we saw last time.
+######## Note though that we use + instead of %>% when combining ggplot2 elements.
+
+bar_chart <- ggplot(plot_dt, aes(x = year, fill = factor(category))) + 
+  geom_bar() + 
+  ggtitle('Atlantic Storms') + 
+  xlab("Year") + 
+  ylab("Number of Storms") + 
+  labs(caption='Data Source: NOAA', fill='Category')
+
+pie_chart <- ggplot(plot_dt, aes(x = "", fill = factor(category))) + 
+  geom_bar() + 
+  coord_polar(theta = "y") +
+  geom_text(stat = "count", aes(label = ..count..), position = position_stack(vjust = 0.5)) + 
+  scale_fill_brewer() +
+  ggtitle('Atlantic Storm Categories (2000-2015)') + 
+  labs(caption='Data Source: NOAA', fill='Category') + theme_void()
+
 # ---------------------------------------------------------
 # Section 4: More Than 1 Plot/Geom On One Chart!
 # ---------------------------------------------------------
