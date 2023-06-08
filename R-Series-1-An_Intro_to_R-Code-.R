@@ -971,7 +971,7 @@ scatter_plot <- scatter_plot + annotate('text', x=-92.5, y=30.2, label='New Orle
 ######## The chart below is another example of more than one Plot/Geom on one chart
 ######## We are plotting a histogram for the storm pressures from our original data overlaid with a 'density' plot
 
-density_plot <- ggplot(dt, aes(x= pressure)) + geom_histogram(aes(y=..density..), colour="black", fill="white", binwidth = 5)
+density_plot <- ggplot(dt, aes(x= pressure)) + geom_histogram(aes(after_stat(density)), colour="black", fill="white", binwidth = 5)
 density_plot <- density_plot + geom_density(alpha=.2, fill="#FF6666") #We see some more ways to format, here a new way to refer to colours and 'alpha' or opacity
 density_plot <- density_plot + ggtitle('Distribution of Atlantic Storm Pressures (1975-2015)') + xlab("Pressure (mbar)") + ylab("Density") + labs(caption='Data Source: NOAA')
 
