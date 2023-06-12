@@ -965,14 +965,14 @@ scatter_plot <- scatter_plot + geom_point(new_orleans, mapping = aes(long,lat), 
 scatter_plot <- scatter_plot + ggtitle('Path of Hurricane Katrina (August 2005)') + xlab("Longitude") + ylab("Latitude") + labs(caption='Data Source: NOAA', size='Category', color='Date') + coord_cartesian(xlim=c(-74, -95), ylim=c(22,38))
 scatter_plot <- scatter_plot + annotate('text', x=-92.5, y=30.2, label='New Orleans')
 
+######## Uncomment the line below if you get the x-axis in the wrong order (i.e. increasing longitude). Apparently an issue for some who run this code.
 # scatter_plot <- scatter_plot + scale_x_reverse()
-######## Uncomment the line above if you get the x-axis in the wrong order (i.e. increasing longitude). Apparently an issue for some who run this code.
 
 ######## The chart below is another example of more than one Plot/Geom on one chart
 ######## We are plotting a histogram for the storm pressures from our original data overlaid with a 'density' plot
 
-density_plot <- ggplot(dt, aes(x= pressure)) + geom_histogram(aes(after_stat(density)), colour="black", fill="white", binwidth = 5)
-density_plot <- density_plot + geom_density(alpha=.2, fill="#FF6666") #We see some more ways to format, here a new way to refer to colours and 'alpha' or opacity
+density_plot <- ggplot(dt, aes(x= pressure)) + geom_histogram(aes(y=..density..), colour="black", fill="white", binwidth = 5) #NB ..density.. has been formally deprecated, and you would now write after_stat(density)
+density_plot <- density_plot + geom_density(alpha=.2, fill="#d24dff") #We see some more ways to format, here a new way to refer to colours and 'alpha' or opacity
 density_plot <- density_plot + ggtitle('Distribution of Atlantic Storm Pressures (1975-2015)') + xlab("Pressure (mbar)") + ylab("Density") + labs(caption='Data Source: NOAA')
 
 # ---------------------------------------------------------
