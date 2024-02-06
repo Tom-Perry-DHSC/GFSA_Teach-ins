@@ -398,6 +398,12 @@ print(class(animal_info_df[c(1, 4), "type"])) # Prints "character"
 print(class(animal_info_df[2, c(1, 2)])) # Prints "data.frame"
 print(class(animal_info_df[2, c("type", "legs")]))
 
+######## To stop R dropping unneeded dimensions and instead always return a dataframe, you can set `drop = FALSE`
+
+print(class(animal_info_df[2, 1, drop = FALSE])) # Prints "data.frame"
+print(class(animal_info_df[2, 3, drop = FALSE])) # Prints "data.frame"
+print(class(animal_info_df[c(1, 4), "type", drop = FALSE])) # Prints "data.frame"
+
 ######## Indexing can be skipped in one or both dimensions of the dataframe:
 
 animal_info_df[, "type"] # Prints the vector c("dog", "fish", "chicken", "cat")
